@@ -1,0 +1,1901 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MoneyMap</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f2;
+            color: #222;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+            max-width: 1250px;
+            margin: auto;
+            padding: 30px;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            margin-top: 5px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-buttons button {
+            border: none;
+            background: #222;
+            color: white;
+            padding: 13px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .header-buttons button:hover {
+            background: #444;
+        }
+
+
+        /* =========================
+           MONTH NAVIGATION
+        ========================= */
+
+        .month-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .month-title {
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .arrow {
+            width: 45px;
+            height: 42px;
+            border: none;
+            border-radius: 8px;
+            background: #222;
+            color: white;
+            font-size: 20px;
+        }
+
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .main {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+
+        /* =========================
+           CALENDAR
+        ========================= */
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .weekday {
+            text-align: center;
+            font-weight: 700;
+            color: #777;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .day {
+            min-height: 85px;
+            border: 1px solid #eeeeee;
+            margin: 3px;
+            padding: 8px;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .day:hover {
+            background: #f1f5f1;
+        }
+
+        .day.selected {
+            border: 2px solid #222;
+        }
+
+        .day-number {
+            font-weight: 700;
+        }
+
+        .day-total {
+            color: #26733d;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+
+        /* =========================
+           RIGHT PANEL
+        ========================= */
+
+        .selected-date {
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+        .total {
+            font-size: 32px;
+            font-weight: 800;
+            margin-top: 8px;
+            margin-bottom: 25px;
+        }
+
+        .expenses-title {
+            color: #777;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .expense {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f8f8;
+            padding: 12px;
+            border-radius: 9px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .expense:hover {
+            background: #eeeeee;
+        }
+
+        .expense-category {
+            font-weight: 700;
+        }
+
+        .expense-description {
+            color: #777;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .expense-amount {
+            font-weight: 700;
+        }
+
+        .add-button {
+            width: 100%;
+            margin-top: 15px;
+            border: none;
+            background: #222;
+            color: white;
+            padding: 13px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal-background {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal {
+            width: 430px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+        }
+
+        .modal-date {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 15px;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cancel {
+            flex: 1;
+            border: none;
+            background: #ddd;
+            color: #222;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .save {
+            flex: 1;
+            border: none;
+            background: #222;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+
+        /* =========================
+           ANALYSIS
+        ========================= */
+
+        .analysis {
+            display: none;
+            margin-top: 25px;
+        }
+
+        .analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .analysis-header h2 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .close-analysis {
+            border: none;
+            background: #eee;
+            color: #222;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 18px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            background: #f7f7f7;
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .stat-title {
+            color: #777;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        .analysis-section {
+            margin-top: 20px;
+        }
+
+        .analysis-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .category-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .category-name {
+            font-weight: 600;
+        }
+
+        .category-value {
+            font-weight: 700;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            .main {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+        <div>
+
+            <div class="logo">
+                MONEYMAP
+            </div>
+
+            <div class="subtitle">
+                Track where your money goes
+            </div>
+
+        </div>
+
+
+        <div class="header-buttons">
+
+            <button onclick="showAnalysis()">
+                ANALYZE
+            </button>
+
+            <button onclick="openModal()">
+                + EXPENSE
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         MONTH
+    ========================= -->
+
+    <div class="month-navigation">
+
+        <button
+            class="arrow"
+            onclick="changeMonth(-1)">
+            ←
+        </button>
+
+
+        <div
+            class="month-title"
+            id="monthTitle">
+        </div>
+
+
+        <button
+            class="arrow"
+            onclick="changeMonth(1)">
+            →
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <div class="main">
+
+
+        <!-- CALENDAR -->
+
+        <div class="card">
+
+            <div class="weekdays">
+
+                <div class="weekday">MON</div>
+                <div class="weekday">TUE</div>
+                <div class="weekday">WED</div>
+                <div class="weekday">THU</div>
+                <div class="weekday">FRI</div>
+                <div class="weekday">SAT</div>
+                <div class="weekday">SUN</div>
+
+            </div>
+
+
+            <div
+                class="calendar"
+                id="calendar">
+            </div>
+
+        </div>
+
+
+
+        <!-- EXPENSES -->
+
+        <div class="card">
+
+
+            <div
+                class="selected-date"
+                id="selectedDate">
+            </div>
+
+
+            <div
+                class="total"
+                id="dayTotal">
+                0 ₴
+            </div>
+
+
+            <div class="expenses-title">
+                EXPENSES
+            </div>
+
+
+            <div id="expenses">
+            </div>
+
+
+            <button
+                class="add-button"
+                onclick="openModal()">
+
+                + ADD EXPENSE
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         ANALYSIS
+    ========================= -->
+
+    <div
+        class="card analysis"
+        id="analysis">
+
+
+        <div class="analysis-header">
+
+            <h2>
+                MONEY ANALYSIS
+            </h2>
+
+            <button
+                class="close-analysis"
+                onclick="closeAnalysis()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+
+        <!-- STATISTICS -->
+
+        <div class="analysis-grid">
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    TOTAL SPENT
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalSpent">
+
+                    0 ₴
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    AVERAGE PER DAY
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="averageSpent">
+
+                    0 ₴
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    TOP CATEGORY
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="topCategory">
+
+                    -
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    MOST EXPENSIVE DAY
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="expensiveDay">
+
+                    -
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- CATEGORIES -->
+
+        <div class="analysis-section">
+
+            <h3>
+                SPENDING BY CATEGORY
+            </h3>
+
+            <div id="categoryAnalysis">
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================
+     ADD EXPENSE MODAL
+========================= -->
+
+<div
+    class="modal-background"
+    id="modalBackground">
+
+
+    <div class="modal">
+
+
+        <h2>
+            ADD EXPENSE
+        </h2>
+
+
+        <div
+            class="modal-date"
+            id="modalDate">
+        </div>
+
+
+
+        <label>
+            AMOUNT
+        </label>
+
+
+        <input
+            id="amount"
+            type="number"
+            placeholder="450">
+
+
+
+        <label>
+            CATEGORY
+        </label>
+
+
+        <select id="category">
+
+            <option>Coffee</option>
+
+            <option>
+                Restaurants & Cafes
+            </option>
+
+            <option>
+                Groceries
+            </option>
+
+            <option>
+                Taxi
+            </option>
+
+            <option>
+                Transport
+            </option>
+
+            <option>
+                Car
+            </option>
+
+            <option>
+                Clothes & Shoes
+            </option>
+
+            <option>
+                Cosmetics & Care
+            </option>
+
+            <option>
+                Beauty Procedures
+            </option>
+
+            <option>
+                Sport
+            </option>
+
+            <option>
+                Entertainment
+            </option>
+
+            <option>
+                Travel
+            </option>
+
+            <option>
+                Subscriptions
+            </option>
+
+            <option>
+                Gifts
+            </option>
+
+            <option>
+                Education
+            </option>
+
+            <option>
+                Technology
+            </option>
+
+            <option>
+                Home
+            </option>
+
+            <option>
+                Health
+            </option>
+
+            <option>
+                Phone & Internet
+            </option>
+
+            <option>
+                Pets
+            </option>
+
+            <option>
+                Other
+            </option>
+
+        </select>
+
+
+
+        <label>
+            DESCRIPTION
+        </label>
+
+
+        <input
+            id="description"
+            type="text"
+            placeholder="Dinner with friends">
+
+
+
+        <div class="modal-buttons">
+
+
+            <button
+                class="cancel"
+                onclick="closeModal()">
+
+                CANCEL
+
+            </button>
+
+
+            <button
+                class="save"
+                onclick="saveExpense()">
+
+                SAVE EXPENSE
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+    /* ===================================
+       DATA
+    =================================== */
+
+    let expenses =
+        JSON.parse(
+            localStorage.getItem(
+                "moneymap_expenses"
+            )
+        ) || [];
+
+
+    let currentMonth =
+        new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            1
+        );
+
+
+    let selectedDate =
+        new Date();
+
+
+
+    /* ===================================
+       SAVE DATA
+    =================================== */
+
+    function saveData() {
+
+        localStorage.setItem(
+            "moneymap_expenses",
+            JSON.stringify(expenses)
+        );
+
+    }
+
+
+
+    /* ===================================
+       DATE KEY
+    =================================== */
+
+    function dateKey(date) {
+
+        return (
+            date.getFullYear()
+            + "-"
+            + String(
+                date.getMonth() + 1
+            ).padStart(2, "0")
+            + "-"
+            + String(
+                date.getDate()
+            ).padStart(2, "0")
+        );
+
+    }
+
+
+
+    /* ===================================
+       MONEY
+    =================================== */
+
+    function money(value) {
+
+        return (
+            Number(value)
+            .toLocaleString("uk-UA")
+            + " ₴"
+        );
+
+    }
+
+
+
+    /* ===================================
+       CALENDAR
+    =================================== */
+
+    function buildCalendar() {
+
+
+        const calendar =
+            document.getElementById(
+                "calendar"
+            );
+
+
+        calendar.innerHTML = "";
+
+
+
+        const monthNames = [
+
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+
+        ];
+
+
+
+        document.getElementById(
+            "monthTitle"
+        ).textContent =
+
+            monthNames[
+                currentMonth.getMonth()
+            ]
+
+            + " "
+
+            + currentMonth.getFullYear();
+
+
+
+        let firstDay =
+            new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth(),
+                1
+            ).getDay();
+
+
+
+        if (firstDay === 0) {
+
+            firstDay = 6;
+
+        } else {
+
+            firstDay = firstDay - 1;
+
+        }
+
+
+
+        /* EMPTY DAYS */
+
+        for (
+            let i = 0;
+            i < firstDay;
+            i++
+        ) {
+
+            calendar.appendChild(
+                document.createElement("div")
+            );
+
+        }
+
+
+
+        /* DAYS */
+
+        const days =
+            new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth() + 1,
+                0
+            ).getDate();
+
+
+
+        for (
+            let day = 1;
+            day <= days;
+            day++
+        ) {
+
+
+            const date =
+                new Date(
+                    currentMonth.getFullYear(),
+                    currentMonth.getMonth(),
+                    day
+                );
+
+
+            const key =
+                dateKey(date);
+
+
+
+            const dayExpenses =
+                expenses.filter(
+                    expense =>
+                        expense.date === key
+                );
+
+
+
+            const total =
+                dayExpenses.reduce(
+                    (sum, expense) =>
+                        sum +
+                        Number(
+                            expense.amount
+                        ),
+                    0
+                );
+
+
+
+            const element =
+                document.createElement(
+                    "div"
+                );
+
+
+            element.className =
+                "day";
+
+
+
+            if (
+                dateKey(selectedDate)
+                === key
+            ) {
+
+                element.classList.add(
+                    "selected"
+                );
+
+            }
+
+
+
+            element.innerHTML = `
+
+                <div class="day-number">
+                    ${day}
+                </div>
+
+                ${
+                    total > 0
+
+                    ? `
+
+                        <div class="day-total">
+                            ${money(total)}
+                        </div>
+
+                    `
+
+                    : ""
+                }
+
+            `;
+
+
+
+            element.onclick =
+                function () {
+
+                    selectedDate = date;
+
+                    showSelectedDate();
+
+                    buildCalendar();
+
+                };
+
+
+
+            calendar.appendChild(
+                element
+            );
+
+        }
+
+    }
+
+
+
+    /* ===================================
+       SHOW SELECTED DATE
+    =================================== */
+
+    function showSelectedDate() {
+
+
+        document.getElementById(
+            "selectedDate"
+        ).textContent =
+
+            selectedDate.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+
+
+        document.getElementById(
+            "modalDate"
+        ).textContent =
+
+            selectedDate.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+
+
+        const key =
+            dateKey(selectedDate);
+
+
+
+        const dayExpenses =
+            expenses.filter(
+                expense =>
+                    expense.date === key
+            );
+
+
+
+        const total =
+            dayExpenses.reduce(
+                (sum, expense) =>
+                    sum +
+                    Number(
+                        expense.amount
+                    ),
+                0
+            );
+
+
+
+        document.getElementById(
+            "dayTotal"
+        ).textContent =
+            money(total);
+
+
+
+        const container =
+            document.getElementById(
+                "expenses"
+            );
+
+
+        container.innerHTML = "";
+
+
+
+        if (
+            dayExpenses.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div style="
+                    color:#888;
+                    padding:10px 0;
+                ">
+
+                    No expenses yet.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+
+        dayExpenses.forEach(
+            function (expense) {
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "expense";
+
+
+
+                item.innerHTML = `
+
+                    <div>
+
+                        <div class="expense-category">
+                            ${expense.category}
+                        </div>
+
+                        <div class="expense-description">
+                            ${expense.description || ""}
+                        </div>
+
+                    </div>
+
+                    <div class="expense-amount">
+                        ${money(expense.amount)}
+                    </div>
+
+                `;
+
+
+
+                item.onclick =
+                    function () {
+
+
+                        const answer =
+                            confirm(
+                                "Delete this expense?"
+                            );
+
+
+                        if (!answer) {
+
+                            return;
+
+                        }
+
+
+
+                        expenses =
+                            expenses.filter(
+                                function (item) {
+
+                                    return !(
+                                        item.id
+                                        === expense.id
+                                    );
+
+                                }
+                            );
+
+
+
+                        saveData();
+
+                        buildCalendar();
+
+                        showSelectedDate();
+
+                    };
+
+
+
+                container.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /* ===================================
+       OPEN MODAL
+    =================================== */
+
+    function openModal() {
+
+
+        document.getElementById(
+            "modalBackground"
+        ).style.display =
+            "flex";
+
+
+
+        document.getElementById(
+            "amount"
+        ).value = "";
+
+
+
+        document.getElementById(
+            "description"
+        ).value = "";
+
+
+
+        document.getElementById(
+            "amount"
+        ).focus();
+
+    }
+
+
+
+    /* ===================================
+       CLOSE MODAL
+    =================================== */
+
+    function closeModal() {
+
+        document.getElementById(
+            "modalBackground"
+        ).style.display =
+            "none";
+
+    }
+
+
+
+    /* ===================================
+       SAVE EXPENSE
+    =================================== */
+
+    function saveExpense() {
+
+
+        const amount =
+            Number(
+                document.getElementById(
+                    "amount"
+                ).value
+            );
+
+
+
+        const category =
+            document.getElementById(
+                "category"
+            ).value;
+
+
+
+        const description =
+            document.getElementById(
+                "description"
+            ).value.trim();
+
+
+
+        if (
+            !amount ||
+            amount <= 0
+        ) {
+
+            alert(
+                "Please enter a valid amount."
+            );
+
+            return;
+
+        }
+
+
+
+        expenses.push({
+
+            id:
+                Date.now(),
+
+            date:
+                dateKey(
+                    selectedDate
+                ),
+
+            amount:
+                amount,
+
+            category:
+                category,
+
+            description:
+                description
+
+        });
+
+
+
+        saveData();
+
+        closeModal();
+
+        buildCalendar();
+
+        showSelectedDate();
+
+
+        /* CLOSE ANALYSIS IF OPEN */
+
+        closeAnalysis();
+
+    }
+
+
+
+    /* ===================================
+       CHANGE MONTH
+    =================================== */
+
+    function changeMonth(
+        direction
+    ) {
+
+
+        currentMonth =
+            new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth()
+                + direction,
+                1
+            );
+
+
+
+        buildCalendar();
+
+    }
+
+
+
+    /* ===================================
+       ANALYSIS
+    =================================== */
+
+    function showAnalysis() {
+
+
+        calculateAnalysis();
+
+
+
+        const analysis =
+            document.getElementById(
+                "analysis"
+            );
+
+
+        analysis.style.display =
+            "block";
+
+
+
+        analysis.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+        });
+
+    }
+
+
+
+    /* ===================================
+       CLOSE ANALYSIS
+    =================================== */
+
+    function closeAnalysis() {
+
+        document.getElementById(
+            "analysis"
+        ).style.display =
+            "none";
+
+    }
+
+
+
+    /* ===================================
+       CALCULATE ANALYSIS
+    =================================== */
+
+    function calculateAnalysis() {
+
+
+        /* TOTAL */
+
+        const total =
+            expenses.reduce(
+                function (
+                    sum,
+                    expense
+                ) {
+
+                    return (
+                        sum +
+                        Number(
+                            expense.amount
+                        )
+                    );
+
+                },
+                0
+            );
+
+
+
+        document.getElementById(
+            "totalSpent"
+        ).textContent =
+            money(total);
+
+
+
+        /* AVERAGE */
+
+        const uniqueDays =
+            new Set(
+                expenses.map(
+                    expense =>
+                        expense.date
+                )
+            ).size;
+
+
+
+        const average =
+            uniqueDays > 0
+
+            ? total / uniqueDays
+
+            : 0;
+
+
+
+        document.getElementById(
+            "averageSpent"
+        ).textContent =
+            money(average);
+
+
+
+        /* NO DATA */
+
+        if (
+            expenses.length === 0
+        ) {
+
+
+            document.getElementById(
+                "topCategory"
+            ).textContent =
+                "-";
+
+
+            document.getElementById(
+                "expensiveDay"
+            ).textContent =
+                "-";
+
+
+            document.getElementById(
+                "categoryAnalysis"
+            ).innerHTML = `
+
+                <div style="color:#888">
+
+                    No expenses yet.
+
+                </div>
+
+            `;
+
+
+            return;
+
+        }
+
+
+
+        /* =========================
+           CATEGORIES
+        ========================= */
+
+        const categories = {};
+
+
+
+        expenses.forEach(
+            function (expense) {
+
+
+                if (
+                    !categories[
+                        expense.category
+                    ]
+                ) {
+
+                    categories[
+                        expense.category
+                    ] = 0;
+
+                }
+
+
+
+                categories[
+                    expense.category
+                ] +=
+                    Number(
+                        expense.amount
+                    );
+
+            }
+        );
+
+
+
+        const sortedCategories =
+            Object.entries(
+                categories
+            ).sort(
+                function (a, b) {
+
+                    return b[1] - a[1];
+
+                }
+            );
+
+
+
+        /* TOP CATEGORY */
+
+        const top =
+            sortedCategories[0];
+
+
+
+        document.getElementById(
+            "topCategory"
+        ).textContent =
+            top[0];
+
+
+
+        /* =========================
+           MOST EXPENSIVE DAY
+        ========================= */
+
+        const days = {};
+
+
+
+        expenses.forEach(
+            function (expense) {
+
+
+                if (
+                    !days[
+                        expense.date
+                    ]
+                ) {
+
+                    days[
+                        expense.date
+                    ] = 0;
+
+                }
+
+
+
+                days[
+                    expense.date
+                ] +=
+                    Number(
+                        expense.amount
+                    );
+
+            }
+        );
+
+
+
+        const sortedDays =
+            Object.entries(
+                days
+            ).sort(
+                function (a, b) {
+
+                    return b[1] - a[1];
+
+                }
+            );
+
+
+
+        const expensive =
+            sortedDays[0];
+
+
+
+        const expensiveDate =
+            new Date(
+                expensive[0]
+            );
+
+
+
+        document.getElementById(
+            "expensiveDay"
+        ).textContent =
+
+            expensiveDate.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "numeric",
+                    month: "short"
+                }
+            )
+
+            + " — "
+
+            + money(
+                expensive[1]
+            );
+
+
+
+        /* =========================
+           CATEGORY LIST
+        ========================= */
+
+        const categoryContainer =
+            document.getElementById(
+                "categoryAnalysis"
+            );
+
+
+        categoryContainer.innerHTML =
+            "";
+
+
+
+        sortedCategories.forEach(
+            function (item) {
+
+
+                const category =
+                    item[0];
+
+                const value =
+                    item[1];
+
+
+
+                const percentage =
+                    total > 0
+
+                    ? (
+                        value /
+                        total *
+                        100
+                    )
+
+                    : 0;
+
+
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "category-row";
+
+
+
+                row.innerHTML = `
+
+                    <div class="category-name">
+                        ${category}
+                    </div>
+
+                    <div class="category-value">
+                        ${money(value)}
+                        (${percentage.toFixed(0)}%)
+                    </div>
+
+                `;
+
+
+
+                categoryContainer.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /* ===================================
+       START APPLICATION
+    =================================== */
+
+    buildCalendar();
+
+    showSelectedDate();
+
+
+</script>
+
+
+</body>
+</html>
+```
